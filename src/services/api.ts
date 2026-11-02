@@ -28,7 +28,7 @@ async function handleApiResponse(res: Response) {
 
 // --- AUTH ---
 export async function loginUser(credentials: { username: string; password: string }) {
-  const res = await fetch(`${API_URL}/auth/login`, {
+  const res = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
@@ -40,7 +40,7 @@ export async function loginUser(credentials: { username: string; password: strin
 }
 
 export async function changePassword(data: { currentPassword: string; newPassword: string }) {
-  const res = await fetch(`${API_URL}/auth/change-password`, {
+  const res = await fetch(`${API_URL}/api/auth/change-password`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -49,7 +49,7 @@ export async function changePassword(data: { currentPassword: string; newPasswor
 }
 
 export async function registerUser(credentials: { username: string; password: string }) {
-  const res = await fetch(`${API_URL}/auth/register`, {
+  const res = await fetch(`${API_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
@@ -59,12 +59,12 @@ export async function registerUser(credentials: { username: string; password: st
 
 // --- WALLETS ---
 export async function getWallets() {
-  const res = await fetch(`${API_URL}/wallets`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API_URL}/api/wallets`, { headers: getAuthHeaders() });
   return handleApiResponse(res);
 }
 
 export async function createWallet(data: { name: string; balance: number }) {
-  const res = await fetch(`${API_URL}/wallets`, {
+  const res = await fetch(`${API_URL}/api/wallets`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -73,7 +73,7 @@ export async function createWallet(data: { name: string; balance: number }) {
 }
 
 export async function deleteWallet(id: number) {
-  const res = await fetch(`${API_URL}/wallets/${id}`, {
+  const res = await fetch(`${API_URL}/api/wallets/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
@@ -87,7 +87,7 @@ export async function transferBalance(data: {
   amount: number;
   description?: string;
 }) {
-  const res = await fetch(`${API_URL}/wallets/transfer`, {
+  const res = await fetch(`${API_URL}/api/wallets/transfer`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -97,12 +97,12 @@ export async function transferBalance(data: {
 
 // --- CATEGORIES ---
 export async function getCategories() {
-  const res = await fetch(`${API_URL}/categories`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API_URL}/api/categories`, { headers: getAuthHeaders() });
   return handleApiResponse(res);
 }
 
 export async function createCategory(data: { name: string }) {
-  const res = await fetch(`${API_URL}/categories`, {
+  const res = await fetch(`${API_URL}/api/categories`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -111,7 +111,7 @@ export async function createCategory(data: { name: string }) {
 }
 
 export async function deleteCategory(id: number) {
-  const res = await fetch(`${API_URL}/categories/${id}`, {
+  const res = await fetch(`${API_URL}/api/categories/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
@@ -121,7 +121,7 @@ export async function deleteCategory(id: number) {
 
 // --- TRANSACTIONS ---
 export async function getTransactions() {
-  const res = await fetch(`${API_URL}/transactions`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API_URL}/api/transactions`, { headers: getAuthHeaders() });
   return handleApiResponse(res);
 }
 
@@ -132,7 +132,7 @@ export async function createTransaction(data: {
   walletId: number;
   categoryId?: number | null;
 }) {
-  const res = await fetch(`${API_URL}/transactions`, {
+  const res = await fetch(`${API_URL}/api/transactions`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -141,7 +141,7 @@ export async function createTransaction(data: {
 }
 
 export async function deleteTransaction(id: number) {
-  const res = await fetch(`${API_URL}/transactions/${id}`, {
+  const res = await fetch(`${API_URL}/api/transactions/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
@@ -151,7 +151,7 @@ export async function deleteTransaction(id: number) {
 
 // --- BUDGETS ---
 export async function getBudgets(month: number, year: number) {
-  const res = await fetch(`${API_URL}/budgets?month=${month}&year=${year}`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API_URL}/api/budgets?month=${month}&year=${year}`, { headers: getAuthHeaders() });
   return handleApiResponse(res);
 }
 
@@ -161,7 +161,7 @@ export async function upsertBudget(data: {
   month: number;
   year: number;
 }) {
-  const res = await fetch(`${API_URL}/budgets`, {
+  const res = await fetch(`${API_URL}/api/budgets`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -170,7 +170,7 @@ export async function upsertBudget(data: {
 }
 
 export async function deleteBudget(id: number) {
-  const res = await fetch(`${API_URL}/budgets/${id}`, {
+  const res = await fetch(`${API_URL}/api/budgets/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
@@ -180,12 +180,12 @@ export async function deleteBudget(id: number) {
 
 // --- SAVINGS GOALS ---
 export async function getSavingsGoals() {
-  const res = await fetch(`${API_URL}/SavingsGoals`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API_URL}/api/SavingsGoals`, { headers: getAuthHeaders() });
   return handleApiResponse(res);
 }
 
 export async function createSavingsGoal(data: { title: string; targetAmount: number; targetDate?: string }) {
-  const res = await fetch(`${API_URL}/SavingsGoals`, {
+  const res = await fetch(`${API_URL}/api/SavingsGoals`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -194,7 +194,7 @@ export async function createSavingsGoal(data: { title: string; targetAmount: num
 }
 
 export async function depositSavingsGoal(id: number, amount: number) {
-  const res = await fetch(`${API_URL}/SavingsGoals/${id}/deposit`, {
+  const res = await fetch(`${API_URL}/api/SavingsGoals/${id}/deposit`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify({ amount }),
@@ -203,7 +203,7 @@ export async function depositSavingsGoal(id: number, amount: number) {
 }
 
 export async function deleteSavingsGoal(id: number) {
-  const res = await fetch(`${API_URL}/SavingsGoals/${id}`, {
+  const res = await fetch(`${API_URL}/api/SavingsGoals/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
@@ -213,7 +213,7 @@ export async function deleteSavingsGoal(id: number) {
 
 // --- RECURRING TRANSACTIONS ---
 export async function getRecurringTransactions() {
-  const res = await fetch(`${API_URL}/recurringtransactions`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API_URL}/api/recurringtransactions`, { headers: getAuthHeaders() });
   return handleApiResponse(res);
 }
 
@@ -225,7 +225,7 @@ export async function createRecurringTransaction(data: {
   categoryId?: number | null;
   dayOfMonth: number;
 }) {
-  const res = await fetch(`${API_URL}/recurringtransactions`, {
+  const res = await fetch(`${API_URL}/api/recurringtransactions`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -234,7 +234,7 @@ export async function createRecurringTransaction(data: {
 }
 
 export async function deleteRecurringTransaction(id: number) {
-  const res = await fetch(`${API_URL}/recurringtransactions/${id}`, {
+  const res = await fetch(`${API_URL}/api/recurringtransactions/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
@@ -243,7 +243,7 @@ export async function deleteRecurringTransaction(id: number) {
 }
 
 export async function processDueRecurringTransactions() {
-  const res = await fetch(`${API_URL}/recurringtransactions/process-due`, {
+  const res = await fetch(`${API_URL}/api/recurringtransactions/process-due`, {
     method: 'POST',
     headers: getAuthHeaders(),
   });
