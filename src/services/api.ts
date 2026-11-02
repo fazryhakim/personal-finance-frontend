@@ -34,8 +34,16 @@ export async function loginUser(credentials: { username: string; password: strin
     body: JSON.stringify(credentials),
   });
   const data = await handleApiResponse(res);
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('username', data.username);
+  // Menggunakan fallback untuk menangani huruf kecil (camelCase) maupun huruf kapital (PascalCase)
+  const token = data.token || data.Token;
+  const username = data.username || data.Username;
+
+  if (token) {
+    localStorage.setItem('token', token);
+  }
+  if (username) {
+    localStorage.setItem('username', username);
+  }
   return data;
 }
 
