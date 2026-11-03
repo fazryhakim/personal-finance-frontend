@@ -1,6 +1,7 @@
 interface Wallet {
   id: number;
   name: string;
+  balance: number; // Tambahkan properti balance agar bisa divalidasi
 }
 
 interface Category {
@@ -190,39 +191,47 @@ export default function TransactionSection({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Form Catat Transaksi */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">Catat Transaksi</h2>
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+        <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Catat Transaksi</h2>
         <form onSubmit={handleAddTransaction} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Pilih Dompet</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Pilih Dompet</label>
             <select
               value={selectedWalletId}
               onChange={(e) => setSelectedWalletId(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white text-sm"
               required
             >
-              {wallets.map((w) => (
-                <option key={w.id} value={w.id}>{w.name}</option>
-              ))}
+              <option value="">-- Pilih Dompet --</option>
+              {wallets.map((w) => {
+                // Jika jenis transaksi adalah pengeluaran (type === '1') dan saldo dompet <= 0, berikan status disable
+                const isZeroBalance = type === '1' && w.balance <= 0;
+
+                return (
+                  <option key={w.id} value={w.id} disabled={isZeroBalance}>
+                    {w.name} (Sisa Saldo: Rp {w.balance?.toLocaleString('id-ID') || 0}) {isZeroBalance ? '- Saldo Habis' : ''}
+                  </option>
+                );
+              })}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Jenis Transaksi</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Jenis Transaksi</label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white text-sm"
             >
               <option value="0">Pemasukan (Income)</option>
               <option value="1">Pengeluaran (Expense)</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Kategori (Opsional)</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Kategori (Opsional)</label>
             <select
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white text-sm"
             >
               <option value="">-- Pilih Kategori --</option>
               {categories.map((c) => (
@@ -231,30 +240,30 @@ export default function TransactionSection({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Nominal (Rp)</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Nominal (Rp)</label>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="50000"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-800 text-sm"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Keterangan</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Keterangan</label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Contoh: Gaji Bulanan / Makan Siang"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-800 text-sm"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition cursor-pointer"
+            className="w-full bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition cursor-pointer text-sm shadow-sm"
           >
             Simpan Transaksi
           </button>
@@ -262,9 +271,9 @@ export default function TransactionSection({
       </div>
 
       {/* Riwayat Transaksi dengan Filter & Tombol Ekspor/PDF */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-700">Riwayat Transaksi</h2>
+          <h2 className="text-xl font-semibold text-gray-700 dark:text-white">Riwayat Transaksi</h2>
           
           <div className="flex items-center space-x-2">
             <button
@@ -287,20 +296,20 @@ export default function TransactionSection({
         </div>
         
         {/* Kontrol Filter, Pencarian & Rentang Tanggal */}
-        <div className="space-y-3 mb-4 pb-4 border-b border-gray-100">
+        <div className="space-y-3 mb-4 pb-4 border-b border-gray-100 dark:border-gray-800">
           <input
             type="text"
             placeholder="Cari keterangan transaksi..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            className="w-full px-3 py-2 text-sm border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-800"
           />
           
           <div className="grid grid-cols-2 gap-2">
             <select
               value={filterWalletId}
               onChange={(e) => setFilterWalletId(e.target.value)}
-              className="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black"
+              className="px-3 py-2 text-sm border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
             >
               <option value="">Semua Dompet</option>
               {wallets.map((w) => (
@@ -311,7 +320,7 @@ export default function TransactionSection({
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black"
+              className="px-3 py-2 text-sm border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
             >
               <option value="">Semua Jenis</option>
               <option value="0">Pemasukan (+)</option>
@@ -322,45 +331,45 @@ export default function TransactionSection({
           {/* Filter Rentang Tanggal Input */}
           <div className="grid grid-cols-2 gap-2 pt-1">
             <div>
-              <label className="block text-[11px] font-medium text-gray-500 mb-1">Dari Tanggal</label>
+              <label className="block text-[11px] font-medium text-gray-500 dark:text-gray-400 mb-1">Dari Tanggal</label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-white"
+                className="w-full px-3 py-1.5 text-sm border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-800"
               />
             </div>
             <div>
-              <label className="block text-[11px] font-medium text-gray-500 mb-1">Sampai Tanggal</label>
+              <label className="block text-[11px] font-medium text-gray-500 dark:text-gray-400 mb-1">Sampai Tanggal</label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-white"
+                className="w-full px-3 py-1.5 text-sm border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-800"
               />
             </div>
           </div>
         </div>
 
         {filteredTransactions.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">Tidak ada transaksi yang cocok.</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-4 text-sm">Tidak ada transaksi yang cocok.</p>
         ) : (
           <ul className="space-y-3 max-h-[300px] overflow-y-auto">
             {filteredTransactions.map((tx) => (
-              <li key={tx.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <li key={tx.id} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <div>
-                  <p className="font-medium text-gray-800">{tx.description}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-medium text-gray-800 dark:text-white text-sm">{tx.description}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {new Date(tx.date).toLocaleDateString('id-ID')} {tx.wallet?.name ? `• ${tx.wallet.name}` : ''}
                   </p>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <span className={`font-bold ${tx.type === 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                  <span className={`font-bold text-sm ${tx.type === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                     {tx.type === 0 ? '+' : '-'} Rp {tx.amount.toLocaleString('id-ID')}
                   </span>
                   <button
                     onClick={() => handleDeleteTransaction(tx.id)}
-                    className="text-red-500 hover:text-red-700 text-sm font-semibold px-2 py-1 bg-red-50 rounded transition cursor-pointer"
+                    className="text-red-500 hover:text-red-700 text-sm font-semibold px-2 py-1 bg-red-50 dark:bg-red-950/50 rounded transition cursor-pointer"
                     title="Hapus Transaksi"
                   >
                     ✕

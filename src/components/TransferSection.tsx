@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 
 interface Wallet {
@@ -63,9 +65,9 @@ export default function TransferSection({ wallets, onTransferSuccess, showToast,
   // Jika dompet kurang dari 2, tampilkan pesan informatif
   if (wallets.length < 2) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h2 className="text-xl font-semibold mb-2 text-gray-700">Transfer Saldo Antar Dompet</h2>
-        <p className="text-sm text-gray-500">
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
+        <h2 className="text-xl font-semibold mb-2 text-gray-700 dark:text-white">Transfer Saldo Antar Dompet</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Anda memerlukan minimal **2 dompet** terdaftar untuk melakukan transfer saldo. Silakan buat dompet tambahan pada menu di atas terlebih dahulu.
         </p>
       </div>
@@ -73,16 +75,16 @@ export default function TransferSection({ wallets, onTransferSuccess, showToast,
   }
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      <h2 className="text-xl font-semibold mb-4 text-gray-700">Transfer Saldo Antar Dompet</h2>
+    <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
+      <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Transfer Saldo Antar Dompet</h2>
       <form onSubmit={handleTransfer} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Dari Dompet (Asal)</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Dari Dompet (Asal)</label>
             <select
               value={sourceWalletId}
               onChange={(e) => setSourceWalletId(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white text-sm"
               required
             >
               {wallets.map((w) => (
@@ -94,11 +96,11 @@ export default function TransferSection({ wallets, onTransferSuccess, showToast,
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Ke Dompet (Tujuan)</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Ke Dompet (Tujuan)</label>
             <select
               value={targetWalletId}
               onChange={(e) => setTargetWalletId(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white text-sm"
               required
             >
               {wallets.map((w) => (
@@ -112,25 +114,28 @@ export default function TransferSection({ wallets, onTransferSuccess, showToast,
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Nominal Transfer (Rp)</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Nominal Transfer (Rp)</label>
             <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="100000"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              type="text"
+              value={amount ? Number(amount).toLocaleString('id-ID') : ''}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/\D/g, '');
+                setAmount(rawValue);
+              }}
+              placeholder="100.000"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-800 text-sm"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Keterangan (Opsional)</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Keterangan (Opsional)</label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Contoh: Tarik tunai / Pindah tabungan"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-800 text-sm"
             />
           </div>
         </div>
@@ -138,7 +143,7 @@ export default function TransferSection({ wallets, onTransferSuccess, showToast,
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-blue-300 cursor-pointer"
+          className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-blue-300 cursor-pointer text-sm shadow-sm"
         >
           {loading ? 'Memproses Transfer...' : 'Kirim Transfer'}
         </button>

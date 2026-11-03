@@ -288,20 +288,37 @@ export default function Home() {
 
   const handleAddTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || !description || !selectedWalletId) return;
+    if (!amount || !description || !selectedWalletId) {
+      showToast('Semua kolom wajib diisi!', 'error');
+      return;
+    }
+
+    const txAmount = parseFloat(amount);
+    const chosenWalletId = parseInt(selectedWalletId);
+    const txType = parseInt(type); // 0 = Pemasukan, 1 = Pengeluaran
+
+    // VALIDASI SALDO KURANG UNTUK PENGELUARAN
+    if (txType === 1) {
+      const targetWallet = wallets.find((w) => w.id === chosenWalletId);
+      if (targetWallet && targetWallet.balance < txAmount) {
+        showToast(`❌ Gagal: Saldo dompet "${targetWallet.name}" tidak mencukupi! (Sisa: Rp ${targetWallet.balance.toLocaleString()})`, 'error');
+        return;
+      }
+    }
+
     try {
       await createTransaction({
-        amount: parseFloat(amount),
-        type: parseInt(type),
+        amount: txAmount,
+        type: txType,
         description,
-        walletId: parseInt(selectedWalletId),
+        walletId: chosenWalletId,
         categoryId: categoryId ? parseInt(categoryId) : null,
       });
       setAmount('');
       setDescription('');
       setCategoryId('');
-      fetchData();
-      showToast('Transaksi berhasil dicatat!');
+      await fetchData(); // Memperbarui data dompet & saldo secara real-time
+      showToast('Transaksi berhasil dicatat & saldo diperbarui!');
     } catch (error) {
       showToast('Gagal mencatat transaksi', 'error');
     }
@@ -436,7 +453,12 @@ export default function Home() {
           {/* MENU 1: DASHBOARD */}
           {activeMenu === 'dashboard' && (
             <div className="space-y-8 animate-fadeIn">
-              <SummaryCards totalBalance={totalBalance} totalIncome={totalIncome} totalExpense={totalExpense} />
+              <SummaryCards 
+                totalBalance={totalBalance} 
+                totalIncome={totalIncome} 
+                totalExpense={totalExpense} 
+                wallets={wallets} 
+              />
               <MonthlyTrendChart transactions={transactions} currentYear={currentYear} />
               <ExpenseChart data={expenseChartData} />
             </div>
