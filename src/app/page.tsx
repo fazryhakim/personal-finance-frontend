@@ -26,6 +26,7 @@ import {
   changePassword,
 } from '@/src/services/api';
 
+import Sidebar from '@/src/components/Sidebar';
 import SummaryCards from '@/src/components/SummaryCards';
 import WalletSection from '@/src/components/WalletSection';
 import CategorySection from '@/src/components/CategorySection';
@@ -108,6 +109,9 @@ export default function Home() {
   const [currentYear, setCurrentYear] = useState<number>(2026);
   const [isClient, setIsClient] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
+  // State untuk Navigasi Menu Aktif
+  const [activeMenu, setActiveMenu] = useState('dashboard');
 
   // State Modal Ganti Password
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -372,121 +376,162 @@ export default function Home() {
   }
 
   return (
-    <main className={`min-h-screen p-8 transition-colors relative ${darkMode ? 'bg-gray-950 text-white' : 'bg-gray-50 text-black'}`}>
-      <div className="max-w-5xl mx-auto space-y-8">
+    <div className={`min-h-screen flex flex-col lg:flex-row h-screen overflow-hidden transition-colors ${darkMode ? 'bg-gray-950 text-white' : 'bg-gray-50 text-black'}`}>
+      
+      {/* Sidebar Navigasi (Otomatis menyesuaikan Desktop & Mobile) */}
+      <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+
+      {/* Area Konten Utama Sebelah Kanan */}
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
+        {/* Top Header Bar */}
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-gray-900 px-8 py-4 border-b border-gray-100 dark:border-gray-800 transition-colors shrink-0">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">💰 Personal Finance Dashboard</h1>
-            {username && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Halo, <span className="font-semibold text-indigo-600 dark:text-indigo-400">{username}</span> 👋</p>}
+            <h1 className="text-xl font-bold text-gray-800 dark:text-white capitalize">
+              {activeMenu === 'dashboard' && '📊 Dashboard Keuangan'}
+              {activeMenu === 'wallets' && '💰 Kelola Dompet & Transfer'}
+              {activeMenu === 'transactions' && '📝 Catat & Riwayat Transaksi'}
+              {activeMenu === 'planning' && '🎯 Anggaran & Target Tabungan'}
+              {activeMenu === 'recurring' && '🔄 Transaksi Berulang'}
+              {activeMenu === 'settings' && '⚙️ Pengaturan & Kategori'}
+            </h1>
+            {username && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Halo, <span className="font-semibold text-indigo-600 dark:text-indigo-400">{username}</span> 👋</p>}
           </div>
           
-          <div className="flex items-center gap-3 flex-wrap">
-            {/* Tombol Ganti Password */}
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowPasswordModal(true)}
-              className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-medium px-4 py-2 rounded-xl text-sm transition border border-indigo-200 dark:border-indigo-800 flex items-center gap-2"
+              className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-medium px-3 py-1.5 rounded-xl text-xs transition border border-indigo-200 dark:border-indigo-800 flex items-center gap-1.5 cursor-pointer"
             >
               🔐 Ganti Password
             </button>
 
-            {/* Tombol Toggle Dark Mode */}
             <button
               onClick={toggleDarkMode}
-              className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-yellow-400 font-medium px-4 py-2 rounded-xl text-sm transition border border-gray-200 dark:border-gray-700 flex items-center gap-2"
+              className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-yellow-400 font-medium px-3 py-1.5 rounded-xl text-xs transition border border-gray-200 dark:border-gray-700 flex items-center gap-1.5 cursor-pointer"
               title="Ubah Tema"
             >
               {darkMode ? '☀️ Light' : '🌙 Dark'}
             </button>
 
-            {/* Tombol Ekspor CSV */}
             <button
               onClick={() => exportTransactionsToCSV(filteredTransactions, 'Laporan_Keuangan_Pribadi.csv')}
-              className="bg-emerald-50 dark:bg-emerald-950 hover:bg-emerald-100 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-medium px-4 py-2 rounded-xl text-sm transition border border-emerald-200 dark:border-emerald-800 flex items-center gap-2"
+              className="bg-emerald-50 dark:bg-emerald-950 hover:bg-emerald-100 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-medium px-3 py-1.5 rounded-xl text-xs transition border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5 cursor-pointer"
             >
               📥 Ekspor CSV
             </button>
 
-            {/* Tombol Logout */}
             <button
               onClick={handleLogout}
-              className="bg-red-50 dark:bg-red-950 hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 font-medium px-4 py-2 rounded-xl text-sm transition border border-red-200 dark:border-red-800"
+              className="bg-red-50 dark:bg-red-950 hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 font-medium px-3 py-1.5 rounded-xl text-xs transition border border-red-200 dark:border-red-800 cursor-pointer"
             >
               🚪 Logout
             </button>
           </div>
-        </div>
+        </header>
 
-        <SummaryCards totalBalance={totalBalance} totalIncome={totalIncome} totalExpense={totalExpense} />
-        <MonthlyTrendChart transactions={transactions} currentYear={currentYear} />
-        <ExpenseChart data={expenseChartData} />
-        
-        <WalletSection 
-          wallets={wallets} loading={loading} walletName={walletName} setWalletName={setWalletName}
-          initialBalance={initialBalance} setInitialBalance={setInitialBalance}
-          handleAddWallet={handleAddWallet} handleDeleteWallet={handleDeleteWallet}
-        />
+        {/* Dynamic Content berdasarkan Menu Sidebar */}
+        <main className="p-8 max-w-5xl w-full mx-auto space-y-8 flex-1">
+          
+          {/* MENU 1: DASHBOARD */}
+          {activeMenu === 'dashboard' && (
+            <div className="space-y-8 animate-fadeIn">
+              <SummaryCards totalBalance={totalBalance} totalIncome={totalIncome} totalExpense={totalExpense} />
+              <MonthlyTrendChart transactions={transactions} currentYear={currentYear} />
+              <ExpenseChart data={expenseChartData} />
+            </div>
+          )}
 
-        <TransferSection wallets={wallets} onTransferSuccess={fetchData} showToast={showToast} transferService={transferBalance} />
+          {/* MENU 2: WALLETS */}
+          {activeMenu === 'wallets' && (
+            <div className="space-y-8 animate-fadeIn">
+              <WalletSection 
+                wallets={wallets} loading={loading} walletName={walletName} setWalletName={setWalletName}
+                initialBalance={initialBalance} setInitialBalance={setInitialBalance}
+                handleAddWallet={handleAddWallet} handleDeleteWallet={handleDeleteWallet}
+              />
+              <TransferSection wallets={wallets} onTransferSuccess={fetchData} showToast={showToast} transferService={transferBalance} />
+            </div>
+          )}
 
-        <BudgetSection 
-          categories={categories} budgets={budgets} currentMonth={currentMonth} currentYear={currentYear}
-          onBudgetChange={fetchData} showToast={showToast} upsertBudgetService={upsertBudget} deleteBudgetService={deleteBudget}
-        />
+          {/* MENU 3: TRANSACTIONS */}
+          {activeMenu === 'transactions' && (
+            <div className="space-y-8 animate-fadeIn">
+              <TransactionSection 
+                wallets={wallets}
+                categories={categories}
+                filteredTransactions={filteredTransactions}
+                selectedWalletId={selectedWalletId}
+                setSelectedWalletId={setSelectedWalletId}
+                type={type}
+                setType={setType}
+                categoryId={categoryId}
+                setCategoryId={setCategoryId}
+                amount={amount}
+                setAmount={setAmount}
+                description={description}
+                setDescription={setDescription}
+                handleAddTransaction={handleAddTransaction}
+                handleDeleteTransaction={handleDeleteTransaction}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                filterWalletId={filterWalletId}
+                setFilterWalletId={setFilterWalletId}
+                filterType={filterType}
+                setFilterType={setFilterType}
+                startDate={startDate}      
+                setStartDate={setStartDate} 
+                endDate={endDate}          
+                setEndDate={setEndDate}    
+              />
+            </div>
+          )}
 
-        <SavingsSection 
-          goals={savingsGoals}
-          onGoalChange={fetchData}
-          showToast={showToast}
-          createGoalService={createSavingsGoal}
-          depositService={depositSavingsGoal}
-          deleteGoalService={deleteSavingsGoal}
-        />
+          {/* MENU 4: PLANNING (BUDGETS & SAVINGS) */}
+          {activeMenu === 'planning' && (
+            <div className="space-y-8 animate-fadeIn">
+              <BudgetSection 
+                categories={categories} budgets={budgets} currentMonth={currentMonth} currentYear={currentYear}
+                onBudgetChange={fetchData} showToast={showToast} upsertBudgetService={upsertBudget} deleteBudgetService={deleteBudget}
+              />
+              <SavingsSection 
+                goals={savingsGoals}
+                onGoalChange={fetchData}
+                showToast={showToast}
+                createGoalService={createSavingsGoal}
+                depositService={depositSavingsGoal}
+                deleteGoalService={deleteSavingsGoal}
+              />
+            </div>
+          )}
 
-        <RecurringSection 
-          recurringList={recurringList}
-          wallets={wallets}
-          categories={categories}
-          onRefresh={fetchData}
-          showToast={showToast}
-          createService={createRecurringTransaction}
-          deleteService={deleteRecurringTransaction}
-          processService={processDueRecurringTransactions}
-        />
+          {/* MENU 5: RECURRING */}
+          {activeMenu === 'recurring' && (
+            <div className="space-y-8 animate-fadeIn">
+              <RecurringSection 
+                recurringList={recurringList}
+                wallets={wallets}
+                categories={categories}
+                onRefresh={fetchData}
+                showToast={showToast}
+                createService={createRecurringTransaction}
+                deleteService={deleteRecurringTransaction}
+                processService={processDueRecurringTransactions}
+              />
+            </div>
+          )}
 
-        <CategorySection 
-          categories={categories} categoryName={categoryName} setCategoryName={setCategoryName}
-          handleAddCategory={handleAddCategory} handleDeleteCategory={handleDeleteCategory}
-        />
+          {/* MENU 6: SETTINGS & CATEGORIES */}
+          {activeMenu === 'settings' && (
+            <div className="space-y-8 animate-fadeIn">
+              <CategorySection 
+                categories={categories} categoryName={categoryName} setCategoryName={setCategoryName}
+                handleAddCategory={handleAddCategory} handleDeleteCategory={handleDeleteCategory}
+              />
+            </div>
+          )}
 
-        <TransactionSection 
-          wallets={wallets}
-          categories={categories}
-          filteredTransactions={filteredTransactions}
-          selectedWalletId={selectedWalletId}
-          setSelectedWalletId={setSelectedWalletId}
-          type={type}
-          setType={setType}
-          categoryId={categoryId}
-          setCategoryId={setCategoryId}
-          amount={amount}
-          setAmount={setAmount}
-          description={description}
-          setDescription={setDescription}
-          handleAddTransaction={handleAddTransaction}
-          handleDeleteTransaction={handleDeleteTransaction}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          filterWalletId={filterWalletId}
-          setFilterWalletId={setFilterWalletId}
-          filterType={filterType}
-          setFilterType={setFilterType}
-          startDate={startDate}      
-          setStartDate={setStartDate} 
-          endDate={endDate}          
-          setEndDate={setEndDate}    
-        />
-
+        </main>
       </div>
 
       {/* Modal Ganti Password */}
@@ -549,6 +594,7 @@ export default function Home() {
         </div>
       )}
 
+      {/* Toast Notification Popup */}
       {toast && (
         <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-xl border text-white font-medium transition-all duration-300 flex items-center space-x-2 ${
           toast.type === 'success' ? 'bg-emerald-600 border-emerald-700' : 'bg-red-600 border-red-700'
@@ -557,6 +603,6 @@ export default function Home() {
           <span>{toast.message}</span>
         </div>
       )}
-    </main>
+    </div>
   );
 }
