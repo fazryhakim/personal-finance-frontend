@@ -242,10 +242,13 @@ export default function TransactionSection({
           <div>
             <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Nominal (Rp)</label>
             <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="50000"
+              type="text"
+              value={amount ? Number(amount).toLocaleString('id-ID') : ''}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/\D/g, '');
+                setAmount(rawValue);
+              }}
+              placeholder="100.000"
               className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black dark:text-white bg-white dark:bg-gray-800 text-sm"
               required
             />
